@@ -1,0 +1,10 @@
+{
+  "key.categories.jmwaypoints_to_xaero": "JourneyMap Waypoints to Xaero",
+  "key.jmwaypoints_to_xaero.import": "JourneyMap の waypoint を取り込む",
+  "jmwaypoints_to_xaero.import.done": "%s 件の waypoint を取り込みました（%s セット、%s 件スキップ）",
+  "jmwaypoints_to_xaero.import.error.no_zip": "config/kuronami-waypoint-bridge に ZIP がありません",
+  "jmwaypoints_to_xaero.import.error.parse_failed": "JourneyMap の ZIP を読めませんでした",
+  "jmwaypoints_to_xaero.import.error.xaero_missing": "Xaero's Minimap が見つかりません",
+  "jmwaypoints_to_xaero.import.error.not_in_world": "ワールドに入ってから実行してください",
+  "jmwaypoints_to_xaero.import.error.failed": "取り込みに失敗しました"
+}

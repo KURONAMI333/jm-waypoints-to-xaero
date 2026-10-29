@@ -1,0 +1,132 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.moddev' version '2.0.141'
+    id 'idea'
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+version = "${mod_version}+neoforge-${minecraft_version}"
+group = mod_group_id
+
+base {
+    archivesName = 'jm-waypoints-to-xaero'
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+neoForge {
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    runs {
+        client {
+            client()
+            // Development-only import probe: JMWAYPOINTS_AUTOTEST=true <runClient>
+            systemProperty 'jmwaypoints.autotest', System.getenv('JMWAYPOINTS_AUTOTEST') ?: 'false'
+            def quickPlay = providers.environmentVariable('JMWAYPOINTS_QUICKPLAY')
+            if (quickPlay.isPresent()) {
+                programArguments.addAll '--quickPlaySingleplayer', quickPlay.get()
+            }
+        }
+
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+repositories {
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
+}
+
+dependencies {
+    // Reflection only for Xaero; the ZIP reader is self-contained.
+    // localRuntime keeps both jars out of the published artifact.
+    localRuntime "maven.modrinth:xaeros-minimap:${xaeros_minimap_version}"
+    localRuntime "maven.modrinth:journeymap:${journeymap_version}"
+
+    // The game's Gson is compile-only through the NeoForge dependency set,
+    // so the test runtime needs it declared explicitly (same 2.10.1 version).
+    testImplementation 'com.google.code.gson:gson:2.10.1'
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+}
+
+var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from 'src/main/templates'
+    into 'build/generated/sources/modMetadata'
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/repo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+def licenseFile = file('LICENSE')
+tasks.named('jar', Jar).configure {
+    inputs.file(licenseFile)
+    from(licenseFile) { rename { "LICENSE_${mod_id}" } }
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}

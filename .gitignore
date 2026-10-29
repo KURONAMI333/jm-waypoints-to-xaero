@@ -1,0 +1,52 @@
+### Gradle ###
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/**/build/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/**/out/
+
+.run/
+
+### Eclipse ###
+.apt_generated
+.classpath
+.eclipse/
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/**/bin/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+### Minecraft Modding ###
+run/
+!**/src/**/run/
+**/src/generated/**/.cache/
+repo/
+!**/src/**/repo/
+
+### 統括↔executor の作業文書（公開 repo に入れない）
+GAP_LOG.md
+_handoff/
+
+### ロゴ検討の制作物（公開 repo に入れない）
+branding/candidate_*.png
+branding/contact_sheet*.png
+branding/jm64_transparent.png
+branding/CAMPAIGN_LEDGER.md
+branding/render_*.py
+branding/__pycache__/

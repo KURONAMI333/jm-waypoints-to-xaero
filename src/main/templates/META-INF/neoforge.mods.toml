@@ -1,0 +1,37 @@
+# JourneyMap Waypoints to Xaero - neoforge.mods.toml
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="${mod_authors}"
+logoFile="logo.png"
+description='''
+${mod_description}
+'''
+
+[[dependencies.${mod_id}]]
+    modId="neoforge"
+    type="required"
+    versionRange="[${neo_version},)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+# Xaero's Minimap is optional on purpose: without it the mod loads and the
+# import does nothing. The classes are only reached through reflection.
+[[dependencies.${mod_id}]]
+    modId="xaerominimap"
+    type="optional"
+    versionRange="[26.5.0,)"
+    ordering="AFTER"
+    side="CLIENT"
